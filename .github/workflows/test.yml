@@ -1,5 +1,8 @@
 name: Tests
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -14,3 +17,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -s tests -v
+
+      - name: Run sample scenario
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          python -c 'from pathlib import Path; Path("demo-left.csv").write_text("id,amount\n1,10.00\n"); Path("demo-right.csv").write_text("amount,id\n10,1\n")'
+          python -m csv_reconcile demo-left.csv demo-right.csv --keys id --decimals amount
