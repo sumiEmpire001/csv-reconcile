@@ -1,0 +1,15 @@
+name: C++ host tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  cpp:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+      - run: cmake --build build
+      - run: ctest --test-dir build --output-on-failure
