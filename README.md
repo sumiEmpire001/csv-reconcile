@@ -48,3 +48,18 @@ Local validation on 30 October 2026: **12 tests passed**. Tests cover 4,000-row 
 UTF-8 CSV with unique nonempty headers; no Excel workbook parser or GUI. The standard CSV parser's default field-size limit applies. Both column sets must match. Empty key values are rejected, and duplicate keys are reported rather than paired. No fuzzy matching, automatic record merges or monetary aggregation is performed. Freeze input files during reconciliation; the engine does not take filesystem snapshots. Input data is temporarily persisted in local SQLite and is not encrypted or securely erased. Files from untrusted sources may still consume substantial disk, CPU or parsing resources.
 
 MIT license; see [LICENSE](LICENSE).
+
+## C++11 bounded in-memory row comparison (additional implementation)
+
+The existing Python code and tests remain unchanged. The portable C++11 core is at `cpp/include/reconcile.hpp`, with tests under `cpp/tests`.
+
+```sh
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+python -m unittest discover -s tests -v
+```
+
+GitHub Actions separately compiles the C++ host tests with GCC and Clang. C++ accepts pre-parsed rows and compares exact string fields. It does NOT parse CSV, normalize decimals, preserve Python's disk-backed SQLite scaling, or expose Python's CLI/duplicate samples. Maximum 10,000 rows per side by default; Python remains the full-featured implementation.
+
+**Embedded integration:** The C++ implementation is a host-tested reusable algorithm, not a verified Arduino/ESP32 sketch. Exceptions, STL allocations and memory limits require adaptation for small microcontrollers. Do not connect physical actuators based on this library without independent fail-safe controls and on-device testing.
