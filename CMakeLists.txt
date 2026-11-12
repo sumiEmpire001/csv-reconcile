@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+project(csv_reconcile_cpp LANGUAGES CXX)
+enable_testing()
+add_executable(test_reconcile cpp/tests/test_reconcile.cpp)
+target_include_directories(test_reconcile PRIVATE cpp/include)
+target_compile_features(test_reconcile PRIVATE cxx_std_11)
+add_test(NAME reconcile_cpp COMMAND test_reconcile)
