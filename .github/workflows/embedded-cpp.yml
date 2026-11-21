@@ -1,0 +1,20 @@
+name: Embedded C++ host regression
+on:
+  push:
+    paths: ['cpp/**', '.github/workflows/embedded-cpp.yml']
+  pull_request:
+    paths: ['cpp/**', '.github/workflows/embedded-cpp.yml']
+jobs:
+  host:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S cpp -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
